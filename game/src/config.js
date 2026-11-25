@@ -1,61 +1,110 @@
-// Every tuning number and colour in one place. The playfield is a fixed 1280x720 logical area;
-// the renderer scales it to the window, so no rule below depends on the screen size.
+// Core constants, layout dimensions, timing rules, and warm warung palette for Warung Rush.
 
-export const FIELD = { width: 1280, height: 720, groundY: 664 };
+export const CANVAS_WIDTH = 1280;
+export const CANVAS_HEIGHT = 720;
+export const FIXED_STEP = 1 / 60;
 
-/** The simulation's fixed step, in seconds: 60 updates a second whatever the display's rate. */
-export const STEP = 1 / 60;
+export const SHIFT_DURATION = 180; // 3-minute shift in seconds
 
-export const PLAYER = {
-  width: 72,
-  height: 24,
-  speed: 560,
-  invulnerable: 1.5,
+export const PLAYER_CONFIG = {
+  radius: 22,
+  speed: 310,
+  dashSpeed: 560,
+  dashDuration: 0.16,
+  dashCooldown: 0.72,
+  interactRadius: 84,
 };
 
-export const LIVES = 3;
-
-export const BLOCK = {
-  minWidth: 40,
-  maxWidth: 110,
-  height: 36,
-  speed: 240,
-  speedPerLevel: 30,
-  speedJitter: 90,
-  interval: 0.55,
-  intervalScale: 0.88,
-  minInterval: 0.14,
-  dodgePoints: 1,
+export const TIMING = {
+  chopDuration: 1.4,
+  chopTapBoost: 0.28,
+  wokCookDuration: 4.2,
+  grillCookDuration: 4.8,
+  potCookDuration: 4.0,
+  burnGraceDuration: 8.5,
+  burnWarningStart: 3.5,
 };
 
-export const COIN = {
-  size: 24,
-  speed: 190,
-  speedPerLevel: 14,
-  interval: 1.4,
-  intervalJitter: 0.8,
-  points: 10,
+export const SCORING = {
+  fastPatienceRatio: 0.62,
+  goodPatienceRatio: 0.30,
+  missedOrderPenalty: 10,
+  streakBonuses: [1.0, 1.0, 1.15, 1.3, 1.5, 1.75, 2.0],
 };
 
-/** Seconds of play per level, and the last level: speeds and spawn rates stop growing there. */
-export const LEVEL = { seconds: 12, max: 12 };
+// Escalating waves over the 3-minute shift
+export const SHIFT_WAVES = [
+  {
+    id: 'opening',
+    label: 'OPENING',
+    startAt: 0,
+    maxOrders: 3,
+    spawnInterval: 13.5,
+    patienceScale: 1.05,
+    menuTier: 1,
+  },
+  {
+    id: 'lunch',
+    label: 'LUNCH RUSH',
+    startAt: 40,
+    maxOrders: 4,
+    spawnInterval: 10.5,
+    patienceScale: 0.92,
+    menuTier: 2,
+  },
+  {
+    id: 'peak',
+    label: 'PEAK RUSH',
+    startAt: 95,
+    maxOrders: 5,
+    spawnInterval: 8.2,
+    patienceScale: 0.80,
+    menuTier: 3,
+  },
+  {
+    id: 'lastcall',
+    label: 'LAST CALL!',
+    startAt: 145,
+    maxOrders: 5,
+    spawnInterval: 7.0,
+    patienceScale: 0.72,
+    menuTier: 3,
+  },
+];
 
-/** How many falling things can exist at once; the pool is allocated once, at boot. */
-export const POOL_SIZE = 64;
+// Walkable kitchen bounds (inside outer counter walls)
+export const KITCHEN_BOUNDS = {
+  left: 162,
+  right: 1102,
+  top: 256,
+  bottom: 572,
+};
 
+// Warm Indonesian street-food warung visual palette
 export const PALETTE = {
-  backdrop: '#11141b',
-  sky: '#1b1f2a',
-  ground: '#2a3040',
-  player: '#4fc3f7',
-  block: '#e5534b',
-  coin: '#f2c94c',
-  panel: '#252b38',
-  text: '#eef1f5',
-  muted: '#8b93a3',
+  backdrop: '#22140c',
+  awningRed: '#b93122',
+  awningCream: '#f6ead4',
+  awningGold: '#e7a93c',
+  floorLight: '#edd9b8',
+  floorDark: '#dfbe91',
+  floorGrout: '#c59e6d',
+  woodTop: '#9c6234',
+  woodFront: '#6f411f',
+  woodTrim: '#cfa06b',
+  woodDark: '#472711',
+  steelTop: '#6b757d',
+  steelLight: '#96a2ab',
+  steelDark: '#3f474e',
+  bananaLeaf: '#4a8c3f',
+  bananaLeafLight: '#68b055',
+  ticketPaper: '#fdf6e3',
+  ticketBorder: '#d7be93',
+  pandanGreen: '#2fa85b',
+  turmericAmber: '#e69b1e',
+  chiliRed: '#d93829',
+  coinGold: '#f7c531',
+  coinRim: '#b8760b',
+  inkDark: '#2b180c',
+  inkMuted: '#6d4c33',
 };
-
-export const FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif';
-
-/** Where the best score is kept between visits (this browser only). */
-export const BEST_KEY = 'block-dodger.best';
